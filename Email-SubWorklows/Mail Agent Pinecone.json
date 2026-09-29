@@ -1,0 +1,265 @@
+{
+  "name": "Mail Agent Pinecone",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "04fd54af-5f06-42e6-ae46-b74f66528786",
+      "name": "When chat message received",
+      "webhookId": "dd5f8b9a-f530-4d7c-8aab-ff2650a43c0c"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=## Role:\nYou are an intelligent email agent that automatically sends personalised emails to recipients. Your task is to generate and send a clear, professional, and accurate email based on the provided names, email addresses, and desired content.\n\n## Rules & Behaviour:\n- Whenever a name is mentioned, ALWAYS use QnA_Vector_Store tool automatically to find their email address.\n- NEVER ask the user for an email address.\n- NEVER skip the QnA_Vector_Store lookup step.\n- Always retrieve the email first, then send the email in the same response without asking for confirmation.\n\n## send_mail\nUse this tool to send mail.\n\n## Email Format:\n- The email must include a **subject line**.\n- It should begin with an appropriate **salutation** (e.g., (\"Hello [Name]\" or \"Dear [Name ]\").\n- The **main content** should be clear, concise, and friendly.\n- The email should end with a **suitable closing phrase** (e.g., \"Best regards, Arnie\").\n\n### Dynamic Personalisation:\n- Automatically replace the placeholder **[Name]** with the recipient's actual name.\n- If the name is missing, use a general salutation such as **Hello, dear team**.\n\n### Review & Optimisation:\n- Avoid unnecessary **repetitions or vague wording**.\n- If the message is **too long or unstructured, summarise it clearly**.\n\n## Email Types (Adaptable Based on Context):\n- Standard information email\n- Reminder or follow-up\n- Offer or marketing email\n\n## Example of a Generated Email:\n**Subject:** Important Information for You, [Name]\n**Text:**\nHello [Name],\nI hope you are doing well. I wanted to quickly inform you about [Topic]. If you have any questions or need further information, feel free to reach out.\nBest regards,\nHamza\n\n## Error Reporting:\n- If any tool call fails, report the EXACT error message you received.\n- Do NOT say \"please check back later\" — always explain what went wrong specifically.\n- If the email address is not found in the vector store, say so explicitly."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6a4e073e-cd60-44ac-8fe6-10e403e0a08e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "53ad6499-d160-49d0-b294-61e6020b276a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "2gGK2o6UnaxUbUcK",
+          "name": "OpenAI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8ndocs",
+          "mode": "list",
+          "cachedResultName": "n8ndocs"
+        },
+        "options": {
+          "pineconeNamespace": "maildocs"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        128,
+        400
+      ],
+      "id": "102e16bd-9d6f-427f-a79b-30a4aa3f2a67",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "xnf97XqRlXUPAgaG",
+          "name": "Pinecone account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        496
+      ],
+      "id": "d9714847-9806-40ae-862a-6f215755b8cd",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "2gGK2o6UnaxUbUcK",
+          "name": "OpenAI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        384
+      ],
+      "id": "f8088857-dbfe-4dbe-95f1-75a5d0659f8e",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "2gGK2o6UnaxUbUcK",
+          "name": "OpenAI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this tool to get email information, you find all relevant mail addresses."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        368,
+        208
+      ],
+      "id": "f5f7bd5a-3c77-4e4d-acff-6da212782882",
+      "name": "QnA_Vector_Store"
+    },
+    {
+      "parameters": {
+        "description": "use this tool to send emails",
+        "workflowId": {
+          "__rl": true,
+          "value": "H2T8VjdqglZI5zkn",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/H2T8VjdqglZI5zkn",
+          "cachedResultName": "Email Agent - Sub Workflows — Send Email"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        752,
+        160
+      ],
+      "id": "1e315aef-64ba-4c52-98ad-1d6b60771436",
+      "name": "send_mail"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "QnA_Vector_Store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "QnA_Vector_Store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QnA_Vector_Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send_mail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ad5f1ce0-3f79-4a99-9a4c-36013ee77f44",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d31287d3e88ef96f87dc32243c869e8c0ad7591c7f3672d03a4c048bedc3a5ee"
+  },
+  "id": "3gfOupVPWrzm0yyg",
+  "tags": []
+}
